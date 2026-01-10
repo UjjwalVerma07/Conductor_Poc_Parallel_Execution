@@ -1,0 +1,24 @@
+{
+  "emailHygiene": {
+    "defaults": {
+      "serviceId": "WBEmailHygiene",
+      "includeUri": "~$HOME/UQU.devm/abinitio/bundle_functions.xfr",
+      "abEBCDICPage": "ebcdic_page_037",
+      "activeConfiguration": "DEV",
+      "workflowName": "EMailHygieneWorkflow",
+      "workflowId": "699",
+      "dagId": "nua-emailhygiene-process"
+    }
+  },
+  "nameParse": {
+    "defaults": {
+      "serviceId": "WBNameParse",
+      "includeUri": "~$HOME/UQU.devm/abinitio/bundle_functions.xfr",
+      "abEBCDICPage": "ebcdic_page_037",
+      "workflowName": "NameParseNavigator",
+      "workflowId": "692"
+    }
+  }
+}
+
+

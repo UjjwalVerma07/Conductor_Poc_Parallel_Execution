@@ -1,0 +1,3 @@
+curl -X POST http://localhost:8080/api/metadata/workflow -H "Content-Type: application/json" -d @event_driven_poc/workflows/direct_integration_workflow.json
+
+#The above curl command is to register the workflow in the conductor

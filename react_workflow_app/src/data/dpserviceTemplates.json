@@ -1,0 +1,1105 @@
+{
+  "emailHygiene": {
+    "sourceTemplateXml": "emailHygieneMetadata.xml",
+    "layoutToTemplate": {
+      "1000876411": {
+        "metadata": {
+          "namespace": "http://dpsapps.intra.infousa.com/dpservices",
+          "includeUri": "~$HOME/UQU.devm/abinitio/bundle_functions.xfr",
+          "environments": [
+            { "name": "AB_EBCDIC_PAGE", "value": "ebcdic_page_037" },
+            { "name": "ACTIVE_CONFIGURATION", "value": "DEV" },
+            { "name": "WORKFLOW_NAME", "value": "EMailHygieneWorkflow" },
+            { "name": "WORKFLOW_ID", "value": "699" }
+          ]
+        },
+        "typedefFieldAttributes": {
+          "data_in": {
+            "id": { "displayname": "id", "description": "id" },
+            "name": { "displayname": "name", "description": "name" },
+            "addr1": { "displayname": "addr1", "description": "addr1" },
+            "addr2": { "displayname": "addr2", "description": "addr2" },
+            "city": { "displayname": "city", "description": "city" },
+            "st": { "displayname": "st", "description": "st" },
+            "zipfull": { "displayname": "zipfull", "description": "zipfull" },
+            "phone": { "displayname": "phone", "description": "phone" },
+            "EE_Email_Addr80": {
+              "displayname": "EE_Email_Addr80",
+              "description": "",
+              "category_name": "email_enhancement",
+              "category_displayname": "Consumer Email Enhancement"
+            },
+            "LF": {}
+          },
+          "append_out": {
+            "id": { "displayname": "id", "description": "id" },
+            "name": { "displayname": "name", "description": "name" },
+            "addr1": { "displayname": "addr1", "description": "addr1" },
+            "addr2": { "displayname": "addr2", "description": "addr2" },
+            "city": { "displayname": "city", "description": "city" },
+            "st": { "displayname": "st", "description": "st" },
+            "zipfull": { "displayname": "zipfull", "description": "zipfull" },
+            "phone": { "displayname": "phone", "description": "phone" },
+            "EE_Email_Addr80": {
+              "displayname": "EE_Email_Addr80",
+              "description": "",
+              "category_name": "email_enhancement",
+              "category_displayname": "Consumer Email Enhancement"
+            },
+            "EH_EMAIL": {
+              "displayname": "Cleansed Email Address",
+              "description": "Cleansed Email Address",
+              "category_name": "EmailHygiene",
+              "category_displayname": "Email Hygiene Appendage",
+              "char_set": "ascii",
+              "fixed_length": 80
+            },
+            "EH_ACTION": {
+              "displayname": "Email Hygiene Action",
+              "description": "Email Hygiene Action",
+              "category_name": "EmailHygiene",
+              "category_displayname": "Email Hygiene Appendage",
+              "char_set": "ascii",
+              "fixed_length": 2
+            },
+            "EH_Code": {
+              "displayname": "Email Hygiene Code",
+              "description": "Email Hygiene Code",
+              "category_name": "EmailHygiene",
+              "category_displayname": "Email Hygiene Appendage",
+              "char_set": "ascii",
+              "fixed_length": 1
+            },
+            "LF": {}
+          }
+        },
+        "emailFromFunction": {
+          "name": "re_replace",
+          "parms": [
+            { "name": "inputStr", "kind": "field" },
+            { "name": "regEx", "kind": "stringLiteral", "value": "[^[:print:]]" },
+            { "name": "newString", "kind": "stringLiteral", "value": "" }
+          ]
+        },
+        "assignments": [
+          { "name": "output.EH_EMAIL", "from": { "kind": "field", "value": "details.eh_email" } },
+          { "name": "output.EH_ACTION", "from": { "kind": "field", "value": "details.eh_action" } },
+          { "name": "output.EH_Code", "from": { "kind": "field", "value": "details.eh_code" } }
+        ],
+        "report": {
+          "fields": [
+            { "name": "EH_Action", "char_set": "ascii", "delim": "\\\\n" },
+            { "name": "EH_Code", "char_set": "ascii", "delim": "\\\\n" }
+          ],
+          "assign": [
+            {
+              "name": "report.EH_Action",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL" },
+                  { "kind": "stringLiteral", "value": "|" },
+                  { "kind": "expression", "value": "details.eh_action" }
+                ]
+              }
+            },
+            {
+              "name": "report.EH_Code",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL" },
+                  { "kind": "stringLiteral", "value": "|" },
+                  { "kind": "expression", "value": "details.eh_code" }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "nameParse": {
+    "sourceTemplateXml": "nameParseMetadata.xml",
+    "layoutToTemplate": {
+      "1001302146": {
+        "metadata": {
+          "namespace": "http://dpsapps.intra.infousa.com/dpservices",
+          "includeUri": "~$HOME/UQU.devm/abinitio/bundle_functions.xfr"
+        },
+        "typedefFieldAttributes": {
+          "data_in": {
+            "id": { "displayname": "id", "description": "id" },
+            "name": { "displayname": "name", "description": "name" },
+            "addr1": { "displayname": "addr1", "description": "addr1" },
+            "addr2": { "displayname": "addr2", "description": "addr2" },
+            "city": { "displayname": "city", "description": "city" },
+            "st": { "displayname": "st", "description": "st" },
+            "zipfull": { "displayname": "zipfull", "description": "zipfull" },
+            "phone": { "displayname": "phone", "description": "phone" },
+            "LF": {}
+          },
+          "data_out": {
+            "id": { "displayname": "id", "description": "id" },
+            "name": { "displayname": "name", "description": "name" },
+            "addr1": { "displayname": "addr1", "description": "addr1" },
+            "addr2": { "displayname": "addr2", "description": "addr2" },
+            "city": { "displayname": "city", "description": "city" },
+            "st": { "displayname": "st", "description": "st" },
+            "zipfull": { "displayname": "zipfull", "description": "zipfull" },
+            "phone": { "displayname": "phone", "description": "phone" },
+            "NP_Family_Score": {
+              "displayname": "NP_Family_Score",
+              "description": "Description of NP_Family_Score",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "decimal",
+              "char_set": "ascii",
+              "n_symbols": 3
+            },
+            "NP_Family_Name": {
+              "displayname": "NP_Family_Name",
+              "description": "Description of NP_Family_Name",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 50
+            },
+            "NP_Family_Extra": {
+              "displayname": "NP_Family_Extra",
+              "description": "Description of NP_Family_Extra",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 15
+            },
+            "NP_Person1_Score": {
+              "displayname": "NP_Person1_Score",
+              "description": "Description of Middle Name",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "decimal",
+              "char_set": "ascii",
+              "n_symbols": 3
+            },
+            "NP_Person1_Edited_Name": {
+              "displayname": "NP_Person1_Edited_Name",
+              "description": "Description of Surname Suffix",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 50
+            },
+            "NP_Person1_Salutation": {
+              "displayname": "NP_Person1_Salutation",
+              "description": "Description of NP_Person1_Salutation",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 10
+            },
+            "NP_Person1_First_Name": {
+              "displayname": "NP_Person1_First_Name",
+              "description": "Description of NP_Person1_First_Name",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 25
+            },
+            "NP_Person1_Middle_Name": {
+              "displayname": "NP_Person1_Middle_Name",
+              "description": "Description of NP_Person1_Middle_Name",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 25
+            },
+            "NP_Person1_Nick_Name": {
+              "displayname": "NP_Person1_Nick_Name",
+              "description": "NP_Person1_Nick_Name",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 25
+            },
+            "NP_Person1_Last_Name": {
+              "displayname": "NP_Person1_Last_Name",
+              "description": "Description of NP_Person1_Last_Name",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 30
+            },
+            "NP_Person1_Maturity_Title": {
+              "displayname": "NP_Person1_Maturity_Title",
+              "description": "Description of NP_Person1_Maturity_Title",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 10
+            },
+            "NP_Person1_Title": {
+              "displayname": "NP_Person1_Title",
+              "description": "Description of NP_Person1_Title",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 10
+            },
+            "NP_Person1_Gender": {
+              "displayname": "NP_Person1_Gender",
+              "description": "Description of NP_Person1_Gender",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 1
+            },
+            "NP_Person1_Extra": {
+              "displayname": "NP_Person1_Extra",
+              "description": "Description of NP_Person1_Extra",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 15
+            },
+            "NP_Person2_Score": {
+              "displayname": "NP_Person2_Score",
+              "description": "Description of NP_Person2_Score",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "decimal",
+              "char_set": "ascii",
+              "n_symbols": 3
+            },
+            "NP_Person2_Edited_Name": {
+              "displayname": "NP_Person2_Edited_Name",
+              "description": "Description of NP_Person2_Edited_Name",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 50
+            },
+            "NP_Person2_Salutation": {
+              "displayname": "NP_Person2_Salutation",
+              "description": "Description of NP_Person2_Salutation",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 10
+            },
+            "NP_Person2_First_Name": {
+              "displayname": "NP_Person2_First_Name",
+              "description": "Description of NP_Person2_First_Name",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 25
+            },
+            "NP_Person2_Middle_Name": {
+              "displayname": "NP_Person2_Middle_Name",
+              "description": "Description of NP_Person2_Middle_Name",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 25
+            },
+            "NP_Person2_Nick_Name": {
+              "displayname": "NP_Person2_Nick_Name",
+              "description": "NP_Person2_Nick_Name",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 25
+            },
+            "NP_Person2_Last_Name": {
+              "displayname": "NP_Person2_Last_Name",
+              "description": "Description of NP_Person2_Last_Name",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 30
+            },
+            "NP_Person2_Maturity_Title": {
+              "displayname": "NP_Person2_Maturity_Title",
+              "description": "Description of NP_Person2_Maturity_Title",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 10
+            },
+            "NP_Person2_Title": {
+              "displayname": "NP_Person2_Title",
+              "description": "Description of NP_Person2_Title",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 10
+            },
+            "NP_Person2_Gender": {
+              "displayname": "NP_Person2_Gender",
+              "description": "Description of NP_Person2_Gender",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 1
+            },
+            "NP_Person2_Extra": {
+              "displayname": "NP_Person2_Extra",
+              "description": "Description of NP_Person2_Extra",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 15
+            },
+            "NP_Business_Score": {
+              "displayname": "NP_Business_Score",
+              "description": "Description of NP_Business_Score",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "decimal",
+              "char_set": "ascii",
+              "n_symbols": 3
+            },
+            "NP_Business_Name": {
+              "displayname": "NP_Business_Name",
+              "description": "Filler",
+              "category_name": "NameParse",
+              "category_displayname": "Name Parse",
+              "type": "string",
+              "char_set": "ascii",
+              "fixed_length": 50
+            },
+            "LF": {}
+          }
+        },
+        "nameFunction": {
+          "name": "re_replace",
+          "parms": [
+            { "name": "inputStr", "kind": "field" },
+            { "name": "regEx", "kind": "stringLiteral", "value": "[^[:print:]]" },
+            { "name": "newString", "kind": "stringLiteral", "value": " " }
+          ]
+        },
+        "assignments": [
+          { "name": "output.NP_Family_Score", "from": { "kind": "field", "value": "details.output.family_score" } },
+          {
+            "name": "output.NP_Family_Name",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.family_name" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 50 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Family_Extra",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.family_extra" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 15 }
+                ]
+              }
+            }
+          },
+          { "name": "output.NP_Person1_Score", "from": { "kind": "field", "value": "details.output.person1_score" } },
+          {
+            "name": "output.NP_Person1_Edited_Name",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person1_name" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 50 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person1_Salutation",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person1_salutation" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 10 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person1_First_Name",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person1_firstname" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 25 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person1_Middle_Name",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person1_middlename" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 25 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person1_Nick_Name",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person1_nickname" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 25 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person1_Last_Name",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person1_lastname" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 30 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person1_Maturity_Title",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person1_maturitytitle" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 10 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person1_Title",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person1_title" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 10 }
+                ]
+              }
+            }
+          },
+          { "name": "output.NP_Person1_Gender", "from": { "kind": "field", "value": "details.output.person1_gender" } },
+          {
+            "name": "output.NP_Person1_Extra",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person1_extra" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 15 }
+                ]
+              }
+            }
+          },
+          { "name": "output.NP_Person2_Score", "from": { "kind": "field", "value": "details.output.person2_score" } },
+          {
+            "name": "output.NP_Person2_Edited_Name",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person2_name" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 50 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person2_Salutation",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person2_salutation" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 10 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person2_First_Name",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person2_firstname" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 25 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person2_Middle_Name",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person2_middlename" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 25 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person2_Nick_Name",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person2_nickname" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 25 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person2_Last_Name",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person2_lastname" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 30 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person2_Maturity_Title",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person2_maturitytitle" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 10 }
+                ]
+              }
+            }
+          },
+          {
+            "name": "output.NP_Person2_Title",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person2_title" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 10 }
+                ]
+              }
+            }
+          },
+          { "name": "output.NP_Person2_Gender", "from": { "kind": "field", "value": "details.output.person2_gender" } },
+          {
+            "name": "output.NP_Person2_Extra",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.person2_extra" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 15 }
+                ]
+              }
+            }
+          },
+          { "name": "output.NP_Business_Score", "from": { "kind": "field", "value": "details.output.business_score" } },
+          {
+            "name": "output.NP_Business_Name",
+            "from": {
+              "kind": "function",
+              "function": {
+                "name": "string_substring",
+                "parms": [
+                  { "kind": "field", "value": "details.output.business_name" },
+                  { "kind": "decimalLiteral", "value": 1 },
+                  { "kind": "decimalLiteral", "value": 50 }
+                ]
+              }
+            }
+          }
+        ],
+        "assignmentDefault": "auto-assign",
+        "report": {
+          "fields": [
+            { "name": "NP_Family_Score", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Family_Name", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Family_Extra", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person1_Score", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person1_Edited_Name", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person1_Salutation", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person1_First_Name", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person1_Middle_Name", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person1_Nick_Name", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person1_Last_Name", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person1_Maturity_Title", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person1_Title", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person1_Gender", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person1_Extra", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person2_Score", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person2_Edited_Name", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person2_Salutation", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person2_First_Name", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person2_Middle_Name", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person2_Nick_Name", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person2_Last_Name", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person2_Maturity_Title", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person2_Title", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person2_Gender", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Person2_Extra", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Business_Score", "char_set": "ascii", "delim": "\\n" },
+            { "name": "NP_Business_Name", "char_set": "ascii", "delim": "\\n" }
+          ],
+          "assign": [
+            {
+              "name": "report.NP_Family_Score",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  { "kind": "field", "value": "output.NP_Family_Score" }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Family_Name",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Family_Name" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Family_Extra",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Family_Extra" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person1_Score",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  { "kind": "field", "value": "output.NP_Person1_Score" }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person1_Salutation",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  { "kind": "field", "value": "output.NP_Person1_Salutation" }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person1_Maturity_Title",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  { "kind": "field", "value": "output.NP_Person1_Maturity_Title" }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person1_Title",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  { "kind": "field", "value": "output.NP_Person1_Title" }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person1_Gender",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  { "kind": "field", "value": "output.NP_Person1_Gender" }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person1_Edited_Name",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Person1_Edited_Name" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person1_First_Name",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Person1_First_Name" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person1_Middle_Name",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Person1_Middle_Name" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person1_Last_Name",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Person1_Last_Name" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person1_Nick_Name",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Person1_Nick_Name" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person1_Extra",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Person1_Extra" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person2_Score",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  { "kind": "field", "value": "output.NP_Person2_Score" }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person2_Salutation",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  { "kind": "field", "value": "output.NP_Person2_Salutation" }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person2_Maturity_Title",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  { "kind": "field", "value": "output.NP_Person2_Maturity_Title" }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person2_Title",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  { "kind": "field", "value": "output.NP_Person2_Title" }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person2_Gender",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  { "kind": "field", "value": "output.NP_Person2_Gender" }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person2_Edited_Name",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Person2_Edited_Name" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person2_First_Name",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Person2_First_Name" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person2_Middle_Name",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Person2_Middle_Name" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person2_Last_Name",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Person2_Last_Name" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person2_Nick_Name",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Person2_Nick_Name" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Person2_Extra",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Person2_Extra" }]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Business_Score",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  { "kind": "field", "value": "output.NP_Business_Score" }
+                ]
+              }
+            },
+            {
+              "name": "report.NP_Business_Name",
+              "function": {
+                "name": "string_concat",
+                "parms": [
+                  { "kind": "stringLiteral", "value": "ALL|" },
+                  {
+                    "kind": "function",
+                    "function": {
+                      "name": "append_exists",
+                      "parms": [{ "kind": "field", "value": "output.NP_Business_Name" }]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+

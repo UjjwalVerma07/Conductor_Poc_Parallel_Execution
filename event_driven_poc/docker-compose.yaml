@@ -1,0 +1,421 @@
+networks:
+  event-driven-net:
+    driver: bridge
+
+volumes:
+  minio_data:
+
+services:
+  # Zookeeper for Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper-event
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_SYNC_LIMIT: 2
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 2181 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - event-driven-net
+
+  # Kafka Message Broker
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka-event
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_REQUEST_TIMEOUT_MS: 30000
+    depends_on:
+      - zookeeper
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      - event-driven-net
+
+  # MinIO S3-Compatible Storage
+  minio:
+    image: minio/minio:latest
+    container_name: minio-event
+    ports:
+      - "9000:9000"      # API port
+      - "9001:9001"      # Console port
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 60s
+    networks:
+      - event-driven-net
+
+  # Conductor Server
+  conductor-server:
+    image: conductoross/conductor-standalone:3.15.0
+    container_name: conductor-server-event
+    environment: 
+      - DB=memory
+      - conductor.event-queues.kafka.enabled=true
+      - conductor.event-queues.kafka.bootstrap-servers=kafka:9092
+      - conductor.default-event-queue.type=kafka
+      - conductor.event-processor.enabled=true
+      - conductor.event-processor.kafka.enabled=true
+      - conductor.event-processor.kafka.bootstrap-servers=kafka:9092
+      - conductor.event-processor.kafka.topic=conductor-events
+      - spring.kafka.consumer.group-id=conductor-events
+      - logging.level.com.netflix.conductor.core.events=INFO
+      - logging.level.com.netflix.conductor.contribs.queue.kafka=INFO
+      - conductor.tasks.kafka.bootstrap-servers=kafka:9092
+      - spring.kafka.bootstrap-servers=kafka:9092
+    ports:
+      - "8080:8080"
+      - "5000:5000"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - event-driven-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Note: Conductor UI is available at http://localhost:8080 (built into the server)
+
+  # Event Router - Routes from conductor-events to service request topics
+  # Services publish directly to conductor-events (pure event-driven, no API calls)
+  event-router:
+    build: ./event_router
+    container_name: event-router
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - CONDUCTOR_SERVER_URL=http://conductor-server:8080/api
+    networks:
+      - event-driven-net
+    restart: unless-stopped
+    command: python3 conductor_event_router.py
+
+  # Email Validator Service
+  email-validator:
+    build: ./microservices/email_validator
+    container_name: email-validator-event
+    depends_on:
+      kafka:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - SERVICE_NAME=email-validator
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET=email-validation
+    networks:
+      - event-driven-net
+    restart: unless-stopped
+
+  # Phone Validator Service
+  phone-validator:
+    build: ./microservices/phone_validator
+    container_name: phone-validator-event
+    depends_on:
+      kafka:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - SERVICE_NAME=phone-validator
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET=phone-validation
+    networks:
+      - event-driven-net
+    restart: unless-stopped
+
+  # Enricher Service
+  enricher:
+    build: ./microservices/enricher
+    container_name: enricher-event
+    depends_on:
+      kafka:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - SERVICE_NAME=enricher
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET=enrichment
+    networks:
+      - event-driven-net
+    restart: unless-stopped
+
+
+    # Ingestion Service
+  ingestion-service:
+    build:
+      context: ./ingestion_service  # Path to your ingestion service Dockerfile
+      dockerfile: Dockerfile
+    container_name: ingestion-service
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # - AWS_ACCESS_KEY_ID=
+      # - AWS_SECRET_ACCESS_KEY=
+      # - AWS_SESSION_TOKEN=
+      # - AWS_PROFILE=dp-service-contributor-958825666686
+      # - AWS_DEFAULT_REGION=us-east-1
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - S3_BUCKET=958825666686-dpservices-testing-data
+      - S3_PREFIX=conductor-poc
+      - LOCAL_TEMP_DIR=/tmp/ingestion_service
+      - KAFKA_BOOTSTRAP=kafka:9092
+    volumes:
+      - ~/.aws:/root/.aws:rw
+      - ./ingestion_service:/app/ingestion_service
+      - /tmp/ingestion_service:/tmp/ingestion_service
+    depends_on:
+      minio:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+        
+    networks:
+      - event-driven-net
+    restart: unless-stopped
+
+
+  
+  airflow-adapter:
+    build: ./microservices/airflow_adapter
+    container_name: airflow-adapter-event
+    depends_on:
+      kafka:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      
+    env_file:
+      - .env
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - SERVICE_NAME=airflow-adapter
+      # MWAA Configuration (Amazon Managed Workflows for Apache Airflow)
+      - MWAA_ENDPOINT=${MWAA_ENDPOINT:-https://a53c6d7a-ec07-465a-9824-6cc199145a7a-vpce.c75.us-east-1.airflow.amazonaws.com:443}
+      - MWAA_SESSION_TOKEN=0b957088-dcc3-4d4e-b723-944291cf6aa5.WDD5kjgx-v96DoShSt1JF85aj3I
+      # DAG Monitoring Configuration
+      - DAG_POLL_INTERVAL=${DAG_POLL_INTERVAL:-10}
+      - DAG_MAX_WAIT_TIME=${DAG_MAX_WAIT_TIME:-3600}
+      # Legacy Airflow Configuration (if using non-MWAA Airflow)
+      - AIRFLOW_HOST=papdpsaplr001l:8080
+      - AIRFLOW_USERNAME=airflow
+      - AIRFLOW_PASSWORD=airflow
+      - AIRFLOW_SERVER_HOST=papdpsaplr001l
+      - AIRFLOW_SERVER_USER=airflow
+      - AIRFLOW_SERVER_PASSWORD=airflow
+      # Note: If SSH requires AD credentials, set AIRFLOW_SERVER_PASSWORD to your AD password
+      # Or set AIRFLOW_SERVER_USER in format: DOMAIN\\username or username@domain.com
+      - AIRFLOW_METADATA_PATH=/opt/airflow/data/metadata
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - POLL_INTERVAL=30
+      - MAX_TIMEOUT=3600
+      # - AWS_ACCESS_KEY_ID=
+      # - AWS_SECRET_ACCESS_KEY=
+      # - AWS_SESSION_TOKEN=
+      - S3_BUCKET=958825666686-dpservices-testing-data
+      - S3_PREFIX=conductor-poc
+    extra_hosts:
+      - "papdpsaplr001l:10.35.75.11"
+      - "papdpsaplr001l.intra.infousa.com:10.35.75.11"
+    volumes:
+      - ~/.aws:/root/.aws:rw
+    networks:
+      - event-driven-net
+    restart: unless-stopped
+
+
+  email-hygiene:
+    build: ./microservices/email_hygiene
+    container_name: email-hygiene-event
+    depends_on:
+      kafka:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      
+    env_file:
+      - .env
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - SERVICE_NAME=email-hygiene
+      # MWAA Configuration (Amazon Managed Workflows for Apache Airflow)
+      - MWAA_ENDPOINT=${MWAA_ENDPOINT:-https://a53c6d7a-ec07-465a-9824-6cc199145a7a-vpce.c75.us-east-1.airflow.amazonaws.com:443}
+      - MWAA_SESSION_TOKEN=0b957088-dcc3-4d4e-b723-944291cf6aa5.WDD5kjgx-v96DoShSt1JF85aj3I
+      # DAG Monitoring Configuration
+      - DAG_POLL_INTERVAL=${DAG_POLL_INTERVAL:-10}
+      - DAG_MAX_WAIT_TIME=${DAG_MAX_WAIT_TIME:-3600}
+      # Legacy Airflow Configuration (if using non-MWAA Airflow))
+      - AIRFLOW_HOST=papdpsaplr001l:8080
+      - AIRFLOW_USERNAME=airflow
+      - AIRFLOW_PASSWORD=airflow
+      - AIRFLOW_SERVER_HOST=papdpsaplr001l
+      - AIRFLOW_SERVER_USER=airflow
+      - AIRFLOW_SERVER_PASSWORD=airflow
+      # Note: If SSH requires AD credentials, set AIRFLOW_SERVER_PASSWORD to your AD password
+      # Or set AIRFLOW_SERVER_USER in format: DOMAIN\\username or username@domain.com
+      - AIRFLOW_METADATA_PATH=/opt/airflow/data/metadata
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - POLL_INTERVAL=30
+      - MAX_TIMEOUT=3600
+      # - AWS_ACCESS_KEY_ID=
+      # - AWS_SECRET_ACCESS_KEY=
+      # - AWS_SESSION_TOKEN=
+      - S3_BUCKET=958825666686-dpservices-testing-data
+      - S3_PREFIX=conductor-poc
+      - LOCAL_TEMP_DIR=/tmp/ingestion_service
+    extra_hosts:
+      - "papdpsaplr001l:10.35.75.11"
+      - "papdpsaplr001l.intra.infousa.com:10.35.75.11"
+    volumes:
+      - ~/.aws:/root/.aws:rw
+    networks:
+      - event-driven-net
+    restart: unless-stopped
+
+  reverse-email:
+    build: ./microservices/reverse_email
+    container_name: reverse-email-event
+    depends_on:
+      kafka:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - SERVICE_NAME=reverse-email
+      # MWAA Configuration (Amazon Managed Workflows for Apache Airflow)
+      - MWAA_ENDPOINT=${MWAA_ENDPOINT:-https://a53c6d7a-ec07-465a-9824-6cc199145a7a-vpce.c75.us-east-1.airflow.amazonaws.com:443}
+      - MWAA_SESSION_TOKEN=0b957088-dcc3-4d4e-b723-944291cf6aa5.WDD5kjgx-v96DoShSt1JF85aj3I
+      # DAG Monitoring Configuration
+      - DAG_POLL_INTERVAL=${DAG_POLL_INTERVAL:-10}
+      - DAG_MAX_WAIT_TIME=${DAG_MAX_WAIT_TIME:-3600}
+      # Legacy Airflow Configuration (if using non-MWAA Airflow))
+      - AIRFLOW_HOST=papdpsaplr001l:8080
+      - AIRFLOW_USERNAME=airflow
+      - AIRFLOW_PASSWORD=airflow
+      - AIRFLOW_SERVER_HOST=papdpsaplr001l
+      - AIRFLOW_SERVER_USER=airflow
+      - AIRFLOW_SERVER_PASSWORD=airflow
+      # Note: If SSH requires AD credentials, set AIRFLOW_SERVER_PASSWORD to your AD password
+      # Or set AIRFLOW_SERVER_USER in format: DOMAIN\\username or username@domain.com
+      - AIRFLOW_METADATA_PATH=/opt/airflow/data/metadata
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - POLL_INTERVAL=30
+      - MAX_TIMEOUT=3600
+    extra_hosts:
+      - "papdpsaplr001l:10.35.75.11"
+      - "papdpsaplr001l.intra.infousa.com:10.35.75.11"
+    volumes:
+      - ~/.aws:/root/.aws:rw
+    networks:
+      - event-driven-net
+    restart: unless-stopped
+  
+  dag_monitor_worker:
+    build: ./microservices/dag_monitor_worker
+    container_name: dag-monitor-worker
+    env_file:
+      - .env
+    environment:
+      - KAFKA_BOOTSTRAP=kafka:9092
+      - MWAA_ENDPOINT=${MWAA_ENDPOINT:-https://a53c6d7a-ec07-465a-9824-6cc199145a7a-vpce.c75.us-east-1.airflow.amazonaws.com:443}
+      - MWAA_SESSION_TOKEN=${MWAA_SESSION_TOKEN:-0b957088-dcc3-4d4e-b723-944291cf6aa5.WDD5kjgx-v96DoShSt1JF85aj3I}
+      - DAG_POLL_INTERVAL=10
+      - DAG_MAX_WAIT_TIME=3600
+      - AIRFLOW_HOST=papdpsaplr001l:8080
+      - AIRFLOW_USERNAME=airflow
+      - AIRFLOW_PASSWORD=airflow
+      - AIRFLOW_SERVER_HOST=papdpsaplr001l
+      - AIRFLOW_SERVER_USER=airflow
+      - AIRFLOW_SERVER_PASSWORD=airflow
+      # Note: If SSH requires AD credentials, set AIRFLOW_SERVER_PASSWORD to your AD password
+      # Or set AIRFLOW_SERVER_USER in format: DOMAIN\\username or username@domain.com
+      - AIRFLOW_METADATA_PATH=/opt/airflow/data/metadata
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - POLL_INTERVAL=30
+      - MAX_TIMEOUT=3600
+      # - AWS_ACCESS_KEY_ID=
+      # - AWS_SECRET_ACCESS_KEY=
+      # - AWS_SESSION_TOKEN=
+      - S3_BUCKET=958825666686-dpservices-testing-data
+      - S3_PREFIX=conductor-poc
+      - LOCAL_TEMP_DIR=/tmp/ingestion_service
+
+    depends_on:
+      kafka:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+    networks:
+      - event-driven-net
+    volumes:
+      - ~/.aws:/root/.aws:rw
+    restart: unless-stopped
+
+
+
+
+
+# aws sso login --profile dp-service-contributor-958825666686

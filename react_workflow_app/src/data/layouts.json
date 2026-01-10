@@ -1,0 +1,107 @@
+{
+  "1000876411": {
+    "typedef": [
+      {
+        "name": "data_in",
+        "LRECL": 406,
+        "default_char_set": "ascii",
+        "record": [
+          { "name": "id", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "name", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "addr1", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "addr2", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "city", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "st", "char_set": "ascii", "fixed_length": 30 },
+          { "name": "zipfull", "char_set": "ascii", "fixed_length": 15 },
+          { "name": "phone", "char_set": "ascii", "fixed_length": 30 },
+          { "name": "EE_Email_Addr80", "char_set": "ascii", "fixed_length": 80 },
+          { "name": "LF", "char_set": "ascii", "fixed_length": 1, "default": "\\n" }
+        ]
+      },
+      {
+        "name": "append_out",
+        "LRECL": 489,
+        "default_char_set": "ascii",
+        "record": [
+          { "name": "id", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "name", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "addr1", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "addr2", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "city", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "st", "char_set": "ascii", "fixed_length": 30 },
+          { "name": "zipfull", "char_set": "ascii", "fixed_length": 15 },
+          { "name": "phone", "char_set": "ascii", "fixed_length": 30 },
+          { "name": "EE_Email_Addr80", "char_set": "ascii", "fixed_length": 80 },
+          { "name": "EH_EMAIL", "char_set": "ascii", "fixed_length": 80 },
+          { "name": "EH_ACTION", "char_set": "ascii", "fixed_length": 2 },
+          { "name": "EH_Code", "char_set": "ascii", "fixed_length": 1 },
+          { "name": "LF", "char_set": "ascii", "fixed_length": 1, "default": "\\n" }
+        ]
+      }
+    ]
+  },
+  "1001302146": {
+    "typedef": [
+      {
+        "name": "data_in",
+        "LRECL": 326,
+        "default_char_set": "ascii",
+        "record": [
+          { "name": "id", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "name", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "addr1", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "addr2", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "city", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "st", "char_set": "ascii", "fixed_length": 30 },
+          { "name": "zipfull", "char_set": "ascii", "fixed_length": 15 },
+          { "name": "phone", "char_set": "ascii", "fixed_length": 30 },
+          { "name": "LF", "char_set": "ascii", "fixed_length": 1, "default": "\\n" }
+        ]
+      },
+      {
+        "name": "data_out",
+        "LRECL": 852,
+        "default_char_set": "ascii",
+        "record": [
+          { "name": "id", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "name", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "addr1", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "addr2", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "city", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "st", "char_set": "ascii", "fixed_length": 30 },
+          { "name": "zipfull", "char_set": "ascii", "fixed_length": 15 },
+          { "name": "phone", "char_set": "ascii", "fixed_length": 30 },
+          { "name": "NP_Family_Score", "char_set": "ascii", "fixed_length": 3 },
+          { "name": "NP_Family_Name", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "NP_Family_Extra", "char_set": "ascii", "fixed_length": 15 },
+          { "name": "NP_Person1_Score", "char_set": "ascii", "fixed_length": 3 },
+          { "name": "NP_Person1_Edited_Name", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "NP_Person1_Salutation", "char_set": "ascii", "fixed_length": 10 },
+          { "name": "NP_Person1_First_Name", "char_set": "ascii", "fixed_length": 25 },
+          { "name": "NP_Person1_Middle_Name", "char_set": "ascii", "fixed_length": 25 },
+          { "name": "NP_Person1_Nick_Name", "char_set": "ascii", "fixed_length": 25 },
+          { "name": "NP_Person1_Last_Name", "char_set": "ascii", "fixed_length": 30 },
+          { "name": "NP_Person1_Maturity_Title", "char_set": "ascii", "fixed_length": 10 },
+          { "name": "NP_Person1_Title", "char_set": "ascii", "fixed_length": 10 },
+          { "name": "NP_Person1_Gender", "char_set": "ascii", "fixed_length": 1 },
+          { "name": "NP_Person1_Extra", "char_set": "ascii", "fixed_length": 15 },
+          { "name": "NP_Person2_Score", "char_set": "ascii", "fixed_length": 3 },
+          { "name": "NP_Person2_Edited_Name", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "NP_Person2_Salutation", "char_set": "ascii", "fixed_length": 10 },
+          { "name": "NP_Person2_First_Name", "char_set": "ascii", "fixed_length": 25 },
+          { "name": "NP_Person2_Middle_Name", "char_set": "ascii", "fixed_length": 25 },
+          { "name": "NP_Person2_Nick_Name", "char_set": "ascii", "fixed_length": 25 },
+          { "name": "NP_Person2_Last_Name", "char_set": "ascii", "fixed_length": 30 },
+          { "name": "NP_Person2_Maturity_Title", "char_set": "ascii", "fixed_length": 10 },
+          { "name": "NP_Person2_Title", "char_set": "ascii", "fixed_length": 10 },
+          { "name": "NP_Person2_Gender", "char_set": "ascii", "fixed_length": 1 },
+          { "name": "NP_Person2_Extra", "char_set": "ascii", "fixed_length": 15 },
+          { "name": "NP_Business_Score", "char_set": "ascii", "fixed_length": 3 },
+          { "name": "NP_Business_Name", "char_set": "ascii", "fixed_length": 50 },
+          { "name": "LF", "char_set": "ascii", "fixed_length": 1, "default": "\\n" }
+        ]
+      }
+    ]
+  }
+}
+

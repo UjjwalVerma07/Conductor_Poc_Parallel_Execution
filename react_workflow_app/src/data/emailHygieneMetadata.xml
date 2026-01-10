@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dps:dpservices xmlns:dps="http://dpsapps.intra.infousa.com/dpservices">
+	<dps:email_hygiene>
+		<dps:append_field dps:name='EH_EMAIL' dps:displayname='Cleansed Email Address' dps:description='Cleansed Email Address' dps:category_name='EmailHygiene' dps:category_displayname='Email Hygiene Appendage'>
+			<dps:string>
+				<dps:char_set>ascii</dps:char_set>
+				<dps:fixed_length>80</dps:fixed_length>
+			</dps:string>
+			<dps:assignment><![CDATA[<dps:field>details.eh_email</dps:field>]]></dps:assignment>
+		</dps:append_field>
+
+		<dps:append_field dps:name='EH_ACTION' dps:displayname='Email Hygiene Action' dps:description='Email Hygiene Action' dps:category_name='EmailHygiene' dps:category_displayname='Email Hygiene Appendage'>
+			<dps:string>
+				<dps:char_set>ascii</dps:char_set>
+				<dps:fixed_length>2</dps:fixed_length>
+			</dps:string>
+			<dps:assignment><![CDATA[<dps:field>details.eh_action</dps:field>]]></dps:assignment>
+		</dps:append_field>
+
+		<dps:append_field dps:name='EH_Code' dps:displayname='Email Hygiene Code' dps:description='Email Hygiene Code' dps:category_name='EmailHygiene' dps:category_displayname='Email Hygiene Appendage'>
+			<dps:string>
+				<dps:char_set>ascii</dps:char_set>
+				<dps:fixed_length>1</dps:fixed_length>
+			</dps:string>
+			<dps:assignment><![CDATA[<dps:field>details.eh_code</dps:field>]]></dps:assignment>
+		</dps:append_field>
+	</dps:email_hygiene>
+</dps:dpservices>
+
+

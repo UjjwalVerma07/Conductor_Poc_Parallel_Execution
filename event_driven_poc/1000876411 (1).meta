@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+DPServices Service Document
+___________________________
+Job ID [$JOB_ID]
+Job Number [$JOB_NUMBER]
+Parent Job ID [$PARENT_JOB_ID]
+Customer ID [$CUSTOMER_ID]
+Order ID [$ORDER_ID]
+User ID [$USER_ID]
+Division [$DIVISION]
+Job Name [$JOB_NAME]
+Job Class [$JOB_CLASS]
+Workflow ID [$WORKFLOW_ID]
+Task Name [$TASK_NAME]
+Task Tag [$TASK_TAG]
+External ID [$EXTERNAL_ID]
+External System [$EXTERNAL_SYSTEM]
+Step Date [$STEP_DATE]
+Step Time [$STEP_TIME]
+Step Number [$STEP_NUMBER]
+Job Date [$JOB_DATE]
+Job Time [$JOB_TIME]
+Parent Job Date [$PARENT_JOB_DATE]
+Parent Job Time [$PARENT_JOB_TIME]
+-->
+<dps:dpservices xmlns:dps="http://dpsapps.intra.infousa.com/dpservices">
+<dps:metadata>
+<dps:environment dps:name="AB_EBCDIC_PAGE">ebcdic_page_037</dps:environment>
+<dps:include dps:uri="~$HOME/UQU.devm/abinitio/bundle_functions.xfr" />
+<dps:environment dps:name="ACTIVE_CONFIGURATION">DEV</dps:environment>
+<dps:environment dps:name="WORKFLOW_NAME">EMailHygieneWorkflow</dps:environment>
+<dps:environment dps:name="WORKFLOW_ID">699</dps:environment>
+<dps:typedef dps:name="data_in">
+<dps:record><dps:field dps:name="id" dps:displayname="id" dps:description="id"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>50</dps:fixed_length></dps:string></dps:field><dps:field dps:name="name" dps:displayname="name" dps:description="name"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>50</dps:fixed_length></dps:string></dps:field><dps:field dps:name="addr1" dps:displayname="addr1" dps:description="addr1"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>50</dps:fixed_length></dps:string></dps:field><dps:field dps:name="addr2" dps:displayname="addr2" dps:description="addr2"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>50</dps:fixed_length></dps:string></dps:field><dps:field dps:name="city" dps:displayname="city" dps:description="city"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>50</dps:fixed_length></dps:string></dps:field><dps:field dps:name="st" dps:displayname="st" dps:description="st"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>30</dps:fixed_length></dps:string></dps:field><dps:field dps:name="zipfull" dps:displayname="zipfull" dps:description="zipfull"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>15</dps:fixed_length></dps:string></dps:field><dps:field dps:name="phone" dps:displayname="phone" dps:description="phone"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>30</dps:fixed_length></dps:string></dps:field><dps:field dps:name="EE_Email_Addr80" dps:displayname="EE_Email_Addr80" dps:description="" dps:category_name="email_enhancement" dps:category_displayname="Consumer Email Enhancement"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>80</dps:fixed_length></dps:string></dps:field><dps:field dps:name="LF"><dps:string><dps:fixed_length>1</dps:fixed_length></dps:string><dps:default><dps:stringLiteral>\n</dps:stringLiteral></dps:default></dps:field></dps:record>
+</dps:typedef>
+<dps:typedef dps:name="append_out">
+<dps:record><dps:field dps:name="id" dps:displayname="id" dps:description="id"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>50</dps:fixed_length></dps:string></dps:field><dps:field dps:name="name" dps:displayname="name" dps:description="name"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>50</dps:fixed_length></dps:string></dps:field><dps:field dps:name="addr1" dps:displayname="addr1" dps:description="addr1"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>50</dps:fixed_length></dps:string></dps:field><dps:field dps:name="addr2" dps:displayname="addr2" dps:description="addr2"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>50</dps:fixed_length></dps:string></dps:field><dps:field dps:name="city" dps:displayname="city" dps:description="city"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>50</dps:fixed_length></dps:string></dps:field><dps:field dps:name="st" dps:displayname="st" dps:description="st"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>30</dps:fixed_length></dps:string></dps:field><dps:field dps:name="zipfull" dps:displayname="zipfull" dps:description="zipfull"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>15</dps:fixed_length></dps:string></dps:field><dps:field dps:name="phone" dps:displayname="phone" dps:description="phone"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>30</dps:fixed_length></dps:string></dps:field><dps:field dps:name="EE_Email_Addr80" dps:displayname="EE_Email_Addr80" dps:description="" dps:category_name="email_enhancement" dps:category_displayname="Consumer Email Enhancement"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>80</dps:fixed_length></dps:string></dps:field><dps:field dps:name="EH_EMAIL" dps:displayname="Cleansed Email Address" dps:description="Cleansed Email Address" dps:category_name="EmailHygiene" dps:category_displayname="Email Hygiene Appendage"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>80</dps:fixed_length></dps:string></dps:field><dps:field dps:name="EH_ACTION" dps:displayname="Email Hygiene Action" dps:description="Email Hygiene Action" dps:category_name="EmailHygiene" dps:category_displayname="Email Hygiene Appendage"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>2</dps:fixed_length></dps:string></dps:field><dps:field dps:name="EH_Code" dps:displayname="Email Hygiene Code" dps:description="Email Hygiene Code" dps:category_name="EmailHygiene" dps:category_displayname="Email Hygiene Appendage"><dps:string><dps:char_set>ascii</dps:char_set><dps:fixed_length>1</dps:fixed_length></dps:string></dps:field><dps:field dps:name="LF"><dps:string><dps:fixed_length>1</dps:fixed_length></dps:string><dps:default><dps:stringLiteral>\n</dps:stringLiteral></dps:default></dps:field></dps:record>
+</dps:typedef>
+</dps:metadata>
+<dps:emailHygiene dps:id="WBEmailHygiene">
+<dps:input>
+<dps:uri>/intstripe/abinitio/temp/1000876411.in</dps:uri>
+<dps:user_type>data_in</dps:user_type>
+</dps:input>
+<dps:email>
+<dps:from><dps:function dps:name="re_replace"><dps:parm dps:name="inputStr"><dps:field>input.EE_Email_Addr80</dps:field></dps:parm><dps:parm dps:name="regEx"><dps:stringLiteral>[^[:print:]]</dps:stringLiteral></dps:parm><dps:parm dps:name="newString"><dps:stringLiteral /></dps:parm></dps:function></dps:from></dps:email>
+<dps:output>
+<dps:uri>/intstripe/abinitio/temp/1000876411.out</dps:uri>
+<dps:user_type>append_out</dps:user_type>
+<dps:assignment>
+<dps:assign dps:name="output.EH_EMAIL"><dps:from><dps:field>details.eh_email</dps:field></dps:from></dps:assign><dps:assign dps:name="output.EH_ACTION"><dps:from><dps:field>details.eh_action</dps:field></dps:from></dps:assign><dps:assign dps:name="output.EH_Code"><dps:from><dps:field>details.eh_code</dps:field></dps:from></dps:assign></dps:assignment>
+</dps:output>
+<dps:report>
+<dps:uri>/intstripe/abinitio/temp/1000876411.report.eh</dps:uri>
+<dps:record>
+<dps:field dps:name="EH_Action"><dps:string><dps:char_set>ascii</dps:char_set><dps:delim>\\n</dps:delim></dps:string></dps:field>
+<dps:field dps:name="EH_Code"><dps:string><dps:char_set>ascii</dps:char_set><dps:delim>\\n</dps:delim></dps:string></dps:field>
+</dps:record>
+</dps:report>
+<dps:report_assignment>
+<dps:assign dps:name="report.EH_Action">
+	<dps:from>
+		<dps:function dps:name="string_concat">
+			<dps:parm>
+				<dps:stringLiteral>ALL</dps:stringLiteral>
+			</dps:parm>
+			<dps:parm>
+				<dps:stringLiteral>|</dps:stringLiteral>
+			</dps:parm>
+			<dps:parm>
+				<dps:expression>details.eh_action</dps:expression>
+			</dps:parm>
+		</dps:function>
+	</dps:from>
+</dps:assign>
+<dps:assign dps:name="report.EH_Code">
+	<dps:from>
+		<dps:function dps:name="string_concat">
+			<dps:parm>
+				<dps:stringLiteral>ALL</dps:stringLiteral>
+			</dps:parm>
+			<dps:parm>
+				<dps:stringLiteral>|</dps:stringLiteral>
+			</dps:parm>
+			<dps:parm>
+				<dps:expression>details.eh_code</dps:expression>
+			</dps:parm>
+		</dps:function>
+	</dps:from>
+</dps:assign>
+</dps:report_assignment>
+</dps:emailHygiene>
+</dps:dpservices>
