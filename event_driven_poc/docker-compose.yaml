@@ -4,6 +4,7 @@ networks:
 
 volumes:
   minio_data:
+  dag_monitor_pgdata:
 
 services:
   # Zookeeper for Kafka
@@ -245,7 +246,7 @@ services:
       - SERVICE_NAME=airflow-adapter
       # MWAA Configuration (Amazon Managed Workflows for Apache Airflow)
       - MWAA_ENDPOINT=${MWAA_ENDPOINT:-https://a53c6d7a-ec07-465a-9824-6cc199145a7a-vpce.c75.us-east-1.airflow.amazonaws.com:443}
-      - MWAA_SESSION_TOKEN=0b957088-dcc3-4d4e-b723-944291cf6aa5.WDD5kjgx-v96DoShSt1JF85aj3I
+      - MWAA_SESSION_TOKEN=d1c9a609-6180-4c1c-b8cc-bdedf8cf3c6e.qFaDhLxBcrnjEMx16DZk9p7waCc
       # DAG Monitoring Configuration
       - DAG_POLL_INTERVAL=${DAG_POLL_INTERVAL:-10}
       - DAG_MAX_WAIT_TIME=${DAG_MAX_WAIT_TIME:-3600}
@@ -295,7 +296,7 @@ services:
       - SERVICE_NAME=email-hygiene
       # MWAA Configuration (Amazon Managed Workflows for Apache Airflow)
       - MWAA_ENDPOINT=${MWAA_ENDPOINT:-https://a53c6d7a-ec07-465a-9824-6cc199145a7a-vpce.c75.us-east-1.airflow.amazonaws.com:443}
-      - MWAA_SESSION_TOKEN=0b957088-dcc3-4d4e-b723-944291cf6aa5.WDD5kjgx-v96DoShSt1JF85aj3I
+      - MWAA_SESSION_TOKEN=d1c9a609-6180-4c1c-b8cc-bdedf8cf3c6e.qFaDhLxBcrnjEMx16DZk9p7waCc
       # DAG Monitoring Configuration
       - DAG_POLL_INTERVAL=${DAG_POLL_INTERVAL:-10}
       - DAG_MAX_WAIT_TIME=${DAG_MAX_WAIT_TIME:-3600}
@@ -342,7 +343,7 @@ services:
       - SERVICE_NAME=reverse-email
       # MWAA Configuration (Amazon Managed Workflows for Apache Airflow)
       - MWAA_ENDPOINT=${MWAA_ENDPOINT:-https://a53c6d7a-ec07-465a-9824-6cc199145a7a-vpce.c75.us-east-1.airflow.amazonaws.com:443}
-      - MWAA_SESSION_TOKEN=0b957088-dcc3-4d4e-b723-944291cf6aa5.WDD5kjgx-v96DoShSt1JF85aj3I
+      - MWAA_SESSION_TOKEN=d1c9a609-6180-4c1c-b8cc-bdedf8cf3c6e.qFaDhLxBcrnjEMx16DZk9p7waCc
       # DAG Monitoring Configuration
       - DAG_POLL_INTERVAL=${DAG_POLL_INTERVAL:-10}
       - DAG_MAX_WAIT_TIME=${DAG_MAX_WAIT_TIME:-3600}
@@ -378,7 +379,7 @@ services:
     environment:
       - KAFKA_BOOTSTRAP=kafka:9092
       - MWAA_ENDPOINT=${MWAA_ENDPOINT:-https://a53c6d7a-ec07-465a-9824-6cc199145a7a-vpce.c75.us-east-1.airflow.amazonaws.com:443}
-      - MWAA_SESSION_TOKEN=${MWAA_SESSION_TOKEN:-0b957088-dcc3-4d4e-b723-944291cf6aa5.WDD5kjgx-v96DoShSt1JF85aj3I}
+      - MWAA_SESSION_TOKEN=${MWAA_SESSION_TOKEN:-d1c9a609-6180-4c1c-b8cc-bdedf8cf3c6e.qFaDhLxBcrnjEMx16DZk9p7waCc}
       - DAG_POLL_INTERVAL=10
       - DAG_MAX_WAIT_TIME=3600
       - AIRFLOW_HOST=papdpsaplr001l:8080
@@ -401,11 +402,19 @@ services:
       - S3_BUCKET=958825666686-dpservices-testing-data
       - S3_PREFIX=conductor-poc
       - LOCAL_TEMP_DIR=/tmp/ingestion_service
+      #This is the Database environment variable
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=dag_monitor
+      - DB_USER=daguser
+      - DB_PASSWORD=dagpass
 
     depends_on:
       kafka:
         condition: service_healthy
       minio:
+        condition: service_healthy
+      postgres:
         condition: service_healthy
 
     networks:
@@ -414,7 +423,25 @@ services:
       - ~/.aws:/root/.aws:rw
     restart: unless-stopped
 
-
+  postgres:
+    image: postgres:15
+    container_name: dag-monitor-postgres
+    environment:
+      POSTGRES_DB: dag_monitor
+      POSTGRES_USER: daguser
+      POSTGRES_PASSWORD: dagpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - dag_monitor_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U daguser -d dag_monitor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - event-driven-net
+    restart: unless-stopped
 
 
 

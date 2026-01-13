@@ -39,6 +39,13 @@ class Config:
     CONDUCTOR_SERVER_URL = os.getenv("CONDUCTOR_SERVER_URL", "http://conductor-server:8080/api")
 
     LOCAL_TEMP_DIR = os.getenv("LOCAL_TEMP_DIR", "/tmp/ingestion_service")
+    
+    # Database Configuration
+    DB_HOST = os.getenv("DB_HOST", "postgres")
+    DB_PORT = os.getenv("DB_PORT", "5432")
+    DB_NAME = os.getenv("DB_NAME", "dag_monitor")
+    DB_USER = os.getenv("DB_USER", "daguser")
+    DB_PASSWORD = os.getenv("DB_PASSWORD", "dagpass")
 
     WORKFLOW_TEMPLATES_DIR = os.getenv("WORKFLOW_TEMPLATES_DIR", "./templates")
     SERVICE_TEMPLATES_DIR = os.getenv("SERVICE_TEMPLATES_DIR", "./templates/services")
