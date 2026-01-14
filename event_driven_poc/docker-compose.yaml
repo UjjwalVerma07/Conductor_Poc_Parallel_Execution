@@ -246,7 +246,7 @@ services:
       - SERVICE_NAME=airflow-adapter
       # MWAA Configuration (Amazon Managed Workflows for Apache Airflow)
       - MWAA_ENDPOINT=${MWAA_ENDPOINT:-https://a53c6d7a-ec07-465a-9824-6cc199145a7a-vpce.c75.us-east-1.airflow.amazonaws.com:443}
-      - MWAA_SESSION_TOKEN=d1c9a609-6180-4c1c-b8cc-bdedf8cf3c6e.qFaDhLxBcrnjEMx16DZk9p7waCc
+      - MWAA_SESSION_TOKEN=1561fd3b-0f6c-4c32-8aea-10732f7420e8.PA0izysum_TiTBl1EJy_RrDwfr4
       # DAG Monitoring Configuration
       - DAG_POLL_INTERVAL=${DAG_POLL_INTERVAL:-10}
       - DAG_MAX_WAIT_TIME=${DAG_MAX_WAIT_TIME:-3600}
@@ -296,7 +296,7 @@ services:
       - SERVICE_NAME=email-hygiene
       # MWAA Configuration (Amazon Managed Workflows for Apache Airflow)
       - MWAA_ENDPOINT=${MWAA_ENDPOINT:-https://a53c6d7a-ec07-465a-9824-6cc199145a7a-vpce.c75.us-east-1.airflow.amazonaws.com:443}
-      - MWAA_SESSION_TOKEN=d1c9a609-6180-4c1c-b8cc-bdedf8cf3c6e.qFaDhLxBcrnjEMx16DZk9p7waCc
+      - MWAA_SESSION_TOKEN=1561fd3b-0f6c-4c32-8aea-10732f7420e8.PA0izysum_TiTBl1EJy_RrDwfr4
       # DAG Monitoring Configuration
       - DAG_POLL_INTERVAL=${DAG_POLL_INTERVAL:-10}
       - DAG_MAX_WAIT_TIME=${DAG_MAX_WAIT_TIME:-3600}
@@ -343,7 +343,7 @@ services:
       - SERVICE_NAME=reverse-email
       # MWAA Configuration (Amazon Managed Workflows for Apache Airflow)
       - MWAA_ENDPOINT=${MWAA_ENDPOINT:-https://a53c6d7a-ec07-465a-9824-6cc199145a7a-vpce.c75.us-east-1.airflow.amazonaws.com:443}
-      - MWAA_SESSION_TOKEN=d1c9a609-6180-4c1c-b8cc-bdedf8cf3c6e.qFaDhLxBcrnjEMx16DZk9p7waCc
+      - MWAA_SESSION_TOKEN=1561fd3b-0f6c-4c32-8aea-10732f7420e8.PA0izysum_TiTBl1EJy_RrDwfr4
       # DAG Monitoring Configuration
       - DAG_POLL_INTERVAL=${DAG_POLL_INTERVAL:-10}
       - DAG_MAX_WAIT_TIME=${DAG_MAX_WAIT_TIME:-3600}
@@ -379,7 +379,7 @@ services:
     environment:
       - KAFKA_BOOTSTRAP=kafka:9092
       - MWAA_ENDPOINT=${MWAA_ENDPOINT:-https://a53c6d7a-ec07-465a-9824-6cc199145a7a-vpce.c75.us-east-1.airflow.amazonaws.com:443}
-      - MWAA_SESSION_TOKEN=${MWAA_SESSION_TOKEN:-d1c9a609-6180-4c1c-b8cc-bdedf8cf3c6e.qFaDhLxBcrnjEMx16DZk9p7waCc}
+      - MWAA_SESSION_TOKEN=${MWAA_SESSION_TOKEN:-1561fd3b-0f6c-4c32-8aea-10732f7420e8.PA0izysum_TiTBl1EJy_RrDwfr4}
       - DAG_POLL_INTERVAL=10
       - DAG_MAX_WAIT_TIME=3600
       - AIRFLOW_HOST=papdpsaplr001l:8080

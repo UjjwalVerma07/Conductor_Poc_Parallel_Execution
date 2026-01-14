@@ -307,7 +307,7 @@ class DAGMonitorWorker:
                 logger.error(f"Output handling failed: {e}")
 
             self.db_manager.update_request_status(request_id, 'completed')
-            self.publish_completion_event(request, 'success')
+            self.publish_completion_event(request, 'success', response_data=response_data)
             return
 
         if state in ['failed', 'skipped', 'upstream_failed']:
@@ -342,6 +342,7 @@ class DAGMonitorWorker:
                             s3_manager.download_file(stats_key, stats_file.name)
                             minio_manager.upload_file(stats_file.name, bucket=minio_output_bucket, 
                                                      object_key=stats_input_key)
+                            
                             logger.info(f"Stats file uploaded to MinIO: {minio_output_bucket}/{stats_input_key}")
                         except Exception as e:
                             logger.error(f"Error processing stats file: {e}")
@@ -365,8 +366,8 @@ class DAGMonitorWorker:
                     logger.info(f"Output file uploaded to MinIO: {minio_output_bucket}/{minio_output_key}")
             else:
                 logger.warning(f"Output URI not found in metadata")
-    
-    def publish_completion_event(self, request, status, error_message=None):
+
+    def publish_completion_event(self, request, status, error_message=None,response_data=None):
         """Publishes DAG completion event to Kafka"""
         try:
             workflow_id = request['workflow_id']
@@ -376,10 +377,19 @@ class DAGMonitorWorker:
             event_type = request['event_type']
             minio_output_bucket = request['minio_output_bucket']
             minio_output_key=request['minio_output_key']
+            if response_data:
+                stats_url = response_data.get('conf', {}).get('stats_url', '')
+                stats_url_parts = stats_url.replace("s3://", "").split("/", 1)
+                
+                if len(stats_url_parts) == 2:
+                    stats_bucket = stats_url_parts[0]
+                    stats_key = stats_url_parts[1]
+                    stats_input_key = stats_key.split("/")[-1]
+
             completion_event = {
                 "workflowId": workflow_id,
                 "taskId": task_id,
-                "eventType": event_type,
+                "eventType": event_type, 
                 "data": {
                     "dag_id": dag_id,
                     "jobid": jobid,
@@ -387,7 +397,7 @@ class DAGMonitorWorker:
                     "result": "success" if status == "success" else "failure",
                     "pipelineStage": "airflow_processing",
                     "timestamp": time.strftime('%Y-%m-%dT%H:%M:%SZ'),
-                    "stats_url": f"minio://{minio_output_bucket}/{minio_output_key}" if status == "success" else None
+                    "stats_url": f"minio://{minio_output_bucket}/{stats_input_key}" if status == "success" else None
                 }
             }
 
